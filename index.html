@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <style>
+            .can-be-focused {
+                background: #c8dcff;
+                color: #1b128f;
+                font-weight: bold;
+            }
+            figure {
+                border: 1px solid #000;
+                height: 20px;
+                width: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>first test</p>
+        <button id="button">check focus</button>
+        <div id="focus-target" tabindex="-1">test me with focus</div>
+        <figure id="focus-mover" role="img" class="dn-node dn-test-class" tabindex="0" aria-label="browser. Contains 5 Bars. Press Enter key to navigate.">
+            <!-- <div role="image" class="dn-node-text" aria-label="browser. Contains 5 Bars. Press Enter key to navigate."></div> -->
+        </figure>
+        <div id="dn-wrapper-data-navigator-schema" role="application" aria-label="Data navigation structure" aria-activedescendant="" class="dn-wrapper" style="width: 100%;">
+            <button id="enter">enter nav</button>
+            <figure id="inside" role="figure" class="dn-node dn-test-class" tabindex="0">
+                <div role="image" class="dn-node-text" aria-label="inside the nav!"></div>
+            </figure>
+        </div>
+        <figure id="focus-move-to" role="img" class="dn-node dn-test-class" tabindex="0" aria-label="test hehehehe.">
+            <!-- <div role="image" class="dn-node-text" aria-label="test hehehehe."></div> -->
+        </figure>
+        <p>second test</p>
+        <hr>
+        <p>Output log from focus: <span id="log"></span></p>
+    </body>
+    <script>
+        document.getElementById('button').addEventListener("click",()=>{
+            document.getElementById('focus-target').focus()
+        })
+        document.getElementById('enter').addEventListener("click",()=>{
+            document.getElementById('inside').focus()
+        })
+        document.body.querySelectorAll('*').forEach(i => {
+            i.addEventListener("focus",(e)=>{
+                console.log("test!",e.target.innerHTML)
+                document.getElementById('log').innerHTML = "focused: "+ e.target.innerHTML
+                e.target.classList.add('can-be-focused')
+            })
+        })
+        document.getElementById('focus-mover').addEventListener("focus",()=>{
+            document.getElementById('focus-move-to').focus()
+        })
+    </script>
+</html>
