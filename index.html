@@ -6,49 +6,82 @@
                 color: #1b128f;
                 font-weight: bold;
             }
-            figure {
+            div[role="img"] {
                 border: 1px solid #000;
                 height: 20px;
-                width: 20px;
+                width: 60px;
             }
         </style>
     </head>
     <body>
-        <p>first test</p>
-        <button id="button">check focus</button>
-        <div id="focus-target" tabindex="-1">test me with focus</div>
-        <figure id="focus-mover" role="img" class="dn-node dn-test-class" tabindex="0" aria-label="browser. Contains 5 Bars. Press Enter key to navigate.">
-            <!-- <div role="image" class="dn-node-text" aria-label="browser. Contains 5 Bars. Press Enter key to navigate."></div> -->
-        </figure>
-        <div id="dn-wrapper-data-navigator-schema" role="application" aria-label="Data navigation structure" aria-activedescendant="" class="dn-wrapper" style="width: 100%;">
+        <div id="app" role="application" aria-label="Data navigation structure" aria-activedescendant="" class="dn-wrapper" style="width: 100%;">
             <button id="enter">enter nav</button>
-            <figure id="inside" role="figure" class="dn-node dn-test-class" tabindex="0">
-                <div role="image" class="dn-node-text" aria-label="inside the nav!"></div>
-            </figure>
+            <div id="pre" role="presentation" aria-hidden="true" class="dn-node dn-test-class">
+                null
+            </div>
+            <div id="center" role="presentation" aria-hidden="true" class="dn-node dn-test-class">
+                null
+            </div>
+            <div id="post" role="presentation" aria-hidden="true" class="dn-node dn-test-class">
+                null
+            </div>
         </div>
-        <figure id="focus-move-to" role="img" class="dn-node dn-test-class" tabindex="0" aria-label="test hehehehe.">
-            <!-- <div role="image" class="dn-node-text" aria-label="test hehehehe."></div> -->
-        </figure>
-        <p>second test</p>
         <hr>
         <p>Output log from focus: <span id="log"></span></p>
     </body>
     <script>
-        document.getElementById('button').addEventListener("click",()=>{
-            document.getElementById('focus-target').focus()
+        const structure = ["cat","dog","bird","mouse","spider","ant","fungus","flower"]
+        let index = 0
+        const pre = document.getElementById('pre')
+        const post = document.getElementById('post')
+        const center = document.getElementById('center')
+        const move = (dir) => {
+            index = index + dir > -1 && index + dir < structure.length ? index + dir : index
+            render(center,index)
+
+            window.setTimeout(()=>{center.focus()},30)
+        }
+        const render = (e,i) => {
+            if (structure[i]) {
+                e.setAttribute('tabindex', e === center ? 0 : -1)
+                e.setAttribute('aria-label', structure[i] + ', ' + i)
+                e.removeAttribute('aria-hidden')
+                e.innerHTML = structure[i] + ', ' + i
+                e.setAttribute('role','img')
+            } else {
+                e.removeAttribute('tabindex')
+                e.removeAttribute('aria-label')
+                e.setAttribute('aria-hidden', "true")
+                e.innerHTML = 'null'
+                e.setAttribute('role','presentation')
+            }
+        }
+        pre.addEventListener("focus",()=> {
+            move(-1)
         })
+        post.addEventListener("focus",()=> {
+            move(+1)
+        })
+        center.addEventListener("focus",()=>{
+            render(pre,index-1)
+            render(post,index+1)
+            document.getElementById('log').innerHTML = center.getAttribute('aria-label')
+        })
+
         document.getElementById('enter').addEventListener("click",()=>{
-            document.getElementById('inside').focus()
+            render(center,index)
+            document.getElementById('center').focus()
         })
-        document.body.querySelectorAll('*').forEach(i => {
-            i.addEventListener("focus",(e)=>{
-                console.log("test!",e.target.innerHTML)
-                document.getElementById('log').innerHTML = "focused: "+ e.target.innerHTML
-                e.target.classList.add('can-be-focused')
-            })
-        })
-        document.getElementById('focus-mover').addEventListener("focus",()=>{
-            document.getElementById('focus-move-to').focus()
+        document.getElementById('app').addEventListener("blur",()=>{
+            pre.removeAttribute('tabindex')
+            pre.removeAttribute('aria-label')
+            pre.setAttribute('aria-hidden', "true")
+            pre.setAttribute('role','presentation')
+
+            post.removeAttribute('tabindex')
+            post.removeAttribute('aria-label')
+            post.setAttribute('aria-hidden', "true")
+            post.setAttribute('role','presentation')
         })
     </script>
 </html>
