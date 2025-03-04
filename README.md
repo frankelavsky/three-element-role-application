@@ -1,5 +1,5 @@
 # three-element-role-application
-A prototype of role-application with focus handling, in order to create a mobile SR fallback for data navigator.
+A prototype of role-application with focus handling, in order to create a mobile SR fallback for [data navigator](https://dig.cmu.edu/data-navigator/), without intercepting swipe gestures in javascript.
 
 ## Notes
 Using a desktop screen reader, this works fine. Using a touch-based screen reader (ipad), there is a little bit of an echo because the swipe focuses and then the focus is moved with javascript.
